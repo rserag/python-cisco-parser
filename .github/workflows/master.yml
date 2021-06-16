@@ -1,0 +1,24 @@
+name: Master
+
+on:
+  push:
+    branches:
+      - 'test-actions'
+
+
+jobs:
+  build-deploy:
+    name: Build and deploy to staging
+    runs-on: ubuntu-18.04
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Deploy to K8S
+        #if: false
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
+          HELM_VALUES_YML: "anthillai-charts/charts/anthillai-dashboard-proxy/values.yaml"
+        run: |
+          ls
+          mkdir ~/.ssh
